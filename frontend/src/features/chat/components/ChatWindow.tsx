@@ -18,8 +18,6 @@ export function ChatWindow() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Only auto-scroll when user is near the bottom — prevents fighting the user
-  // when they scroll up to read previous messages during streaming.
   const isNearBottom = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return true;
@@ -33,22 +31,22 @@ export function ChatWindow() {
   }, [messages.length, streamState.tokens, isNearBottom]);
 
   const handleSend = useCallback(
-    (query: string) => {
-      sendMessage(query);
-    },
+    (query: string) => sendMessage(query),
     [sendMessage],
   );
 
   const hasMessages = messages.length > 0;
-  const isActive = isStreaming || hasMessages;
+  const isActive    = isStreaming || hasMessages;
+  const showPrompts = !isActive && isAuthenticated;
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-background">
+
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
         <div>
-          <h2 className="text-sm font-semibold">Grounded Chat</h2>
-          <p className="text-xs text-muted-foreground">
+          <h2 className="text-sm font-semibold text-foreground">Grounded Chat</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
             Every number traces back to a source row
           </p>
         </div>
@@ -65,35 +63,19 @@ export function ChatWindow() {
         )}
       </div>
 
-      {/* Messages area */}
+      {/* Messages / Empty state */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
         {!isActive ? (
-          <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+          <div className="flex flex-col items-center justify-center h-full px-8 text-center">
             <EmptyState
               icon={MessageSquare}
               title="Ask your AI employee anything"
               description="Revenue, ROAS, ad spend, campaign performance — all grounded in real data."
             />
-
-            {isAuthenticated && (
-              <div className="mt-6 flex flex-wrap justify-center gap-2 max-w-md">
-                {QUICK_PROMPTS.map((prompt) => (
-                  <button
-                    key={prompt.query}
-                    type="button"
-                    onClick={() => handleSend(prompt.query)}
-                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground hover:bg-primary/5 transition-all duration-150"
-                  >
-                    {prompt.label}
-                  </button>
-                ))}
-              </div>
-            )}
-
             {!isAuthenticated && (
               <p className="mt-4 text-xs text-muted-foreground">
                 Set your bearer token in{" "}
-                <Link to="/settings" className="text-primary underline underline-offset-2">
+                <Link to="/settings" className="underline underline-offset-2 hover:text-foreground">
                   Settings
                 </Link>{" "}
                 to start chatting.
@@ -110,6 +92,24 @@ export function ChatWindow() {
           </div>
         )}
       </div>
+
+      {/* Quick prompts — left-aligned with chat bar, pinned above input */}
+      {showPrompts && (
+        <div className="px-4 pb-1.5">
+          <div className="max-w-5xl mx-auto flex flex-wrap gap-1.5">
+            {QUICK_PROMPTS.map((prompt) => (
+              <button
+                key={prompt.query}
+                type="button"
+                onClick={() => handleSend(prompt.query)}
+                className="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-150 whitespace-nowrap"
+              >
+                {prompt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Input */}
       <ChatInput

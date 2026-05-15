@@ -35,14 +35,18 @@ def _normalize_decimal(value: Decimal | str | int | float) -> Decimal:
 
 def _ensure_timezone_aware(value: datetime, field_name: str) -> datetime:
     if value.tzinfo is None:
-        raise CitationValidationError(f"{field_name} must be timezone-aware")
+        return value.replace(tzinfo=timezone.utc)
     return value.astimezone(timezone.utc)
 
 
 def _parse_iso_datetime(value: Any, field_name: str) -> datetime:
     if not isinstance(value, str) or not value.strip():
         raise CitationValidationError(f"{field_name} must be a non-empty ISO datetime string")
-    parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    cleaned = value.strip().replace("Z", "+00:00")
+    # Handle plain date strings like "2026-05-08" — assume start of day UTC
+    if len(cleaned) == 10:
+        cleaned = f"{cleaned}T00:00:00+00:00"
+    parsed = datetime.fromisoformat(cleaned)
     return _ensure_timezone_aware(parsed, field_name)
 
 
@@ -114,15 +118,18 @@ class LLMService:
         return cleaned
 
     def _build_system_prompt(self) -> str:
+        from datetime import datetime, timezone
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         return (
-            "You are a grounded D2C business intelligence assistant. "
-            "CRITICAL RULE: Never include any numbers, figures, percentages, or statistics "
-            "in your response unless they come directly from a tool you called in this conversation. "
-            "For greetings, capability questions, or any message that does not require data, "
-            "respond in plain text with zero numeric claims. "
-            "When data is needed, call the appropriate tool first, then answer using only what the tool returned. "
-            "If no valid grounded data is available, say so clearly without inventing figures. "
-            "Keep responses concise and factual."
+            f"You are a grounded D2C business intelligence assistant. Today's date is {today} UTC. "
+            "CRITICAL RULES: "
+            "1. Never include any numbers, figures, percentages, or statistics in your response unless they come directly from a tool you called in this conversation. "
+            "2. The merchant_id is always automatically injected into every tool call — never ask the user for it. "
+            "3. When the user mentions relative dates like 'this week', 'last 7 days', 'this month', 'today' — resolve them to ISO 8601 dates yourself using today's date and call the tool immediately. Do not ask the user for dates. "
+            "4. Always call the relevant tool immediately when data is requested. Do not ask clarifying questions about merchant_id or dates. "
+            "5. For greetings or non-data questions, respond in plain text with zero numeric claims. "
+            "6. Keep responses concise and factual. "
+            "Example: if asked 'what was my revenue this week', immediately call get_metric_summary with metric_name=revenue, start_date=7 days ago, end_date=today."
         )
 
     def _build_gemini_schema(self, schema: dict[str, Any]) -> types.Schema:

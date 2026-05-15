@@ -30,10 +30,10 @@ export function Providers({ children }: ProvidersProps) {
         {children}
         <Toaster
           position="bottom-right"
-          theme="dark"
+          theme="light"
           toastOptions={{
             classNames: {
-              toast: "bg-card border-border text-foreground",
+              toast: "bg-card border-border text-foreground shadow-sm",
               description: "text-muted-foreground",
             },
           }}

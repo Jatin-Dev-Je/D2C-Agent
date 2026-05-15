@@ -67,7 +67,7 @@ QUERY_METRICS_TOOL: dict[str, Any] = {
                 "description": "Optional grouping dimension for client-side shaping.",
             },
         },
-        "required": ["merchant_id", "metric_name", "start_date", "end_date"],
+        "required": ["metric_name", "start_date", "end_date"],
     },
 }
 
@@ -102,7 +102,7 @@ GET_METRIC_SUMMARY_TOOL: dict[str, Any] = {
                 "description": "Inclusive end date or datetime in ISO 8601 format.",
             },
         },
-        "required": ["merchant_id", "metric_name", "start_date", "end_date"],
+        "required": ["metric_name", "start_date", "end_date"],
     },
 }
 
@@ -148,7 +148,6 @@ COMPARE_METRIC_PERIODS_TOOL: dict[str, Any] = {
             },
         },
         "required": [
-            "merchant_id",
             "metric_name",
             "current_start",
             "current_end",
@@ -190,7 +189,7 @@ GET_CAMPAIGN_PERFORMANCE_TOOL: dict[str, Any] = {
                 "description": "Maximum number of campaign rows to surface to the model.",
             },
         },
-        "required": ["merchant_id", "start_date", "end_date"],
+        "required": ["start_date", "end_date"],
     },
 }
 
@@ -220,7 +219,7 @@ GET_ROAS_SUMMARY_TOOL: dict[str, Any] = {
                 "description": "Inclusive end date or datetime in ISO 8601 format.",
             },
         },
-        "required": ["merchant_id", "start_date", "end_date"],
+        "required": ["start_date", "end_date"],
     },
 }
 

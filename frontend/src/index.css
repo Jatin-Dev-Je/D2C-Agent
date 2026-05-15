@@ -1,56 +1,74 @@
 @import "tailwindcss";
 
-/* ── Design tokens (dark-first operational dashboard) ─────────────────────── */
+/* ── Design tokens — Notion / ChatGPT light ───────────────────────────────── */
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5.5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 5.5%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 238 84% 67%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4% 14%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 4% 14%;
-    --muted-foreground: 240 5% 50%;
-    --accent: 240 4% 12%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 13%;
-    --input: 240 4% 13%;
-    --ring: 238 84% 67%;
+    /* Base surfaces */
+    --background:          0 0% 100%;       /* #FFFFFF  — main canvas */
+    --foreground:          43 9% 20%;       /* #37352F  — Notion text */
+
+    /* Cards */
+    --card:                0 0% 100%;
+    --card-foreground:     43 9% 20%;
+
+    /* Popovers / dropdowns */
+    --popover:             0 0% 100%;
+    --popover-foreground:  43 9% 20%;
+
+    /* Primary — near-black for buttons & logo (Notion style) */
+    --primary:             240 3% 12%;      /* #1C1C1E */
+    --primary-foreground:  0 0% 100%;
+
+    /* Secondary — sidebar & subtle fills */
+    --secondary:           60 9% 97%;       /* #F7F7F5  — Notion sidebar */
+    --secondary-foreground: 43 9% 20%;
+
+    /* Muted — empty states, captions */
+    --muted:               60 9% 97%;
+    --muted-foreground:    30 2% 47%;       /* #787774  — Notion secondary text */
+
+    /* Accent — hover & active fill */
+    --accent:              60 2% 92%;       /* #EBEBEA  — Notion hover */
+    --accent-foreground:   43 9% 20%;
+
+    /* Destructive */
+    --destructive:         0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & inputs */
+    --border:              60 5% 91%;       /* #E8E8E4 */
+    --input:               60 5% 91%;
+    --ring:                240 3% 12%;
+
     --radius: 0.5rem;
   }
 }
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
+  --color-background:           hsl(var(--background));
+  --color-foreground:           hsl(var(--foreground));
+  --color-card:                 hsl(var(--card));
+  --color-card-foreground:      hsl(var(--card-foreground));
+  --color-popover:              hsl(var(--popover));
+  --color-popover-foreground:   hsl(var(--popover-foreground));
+  --color-primary:              hsl(var(--primary));
+  --color-primary-foreground:   hsl(var(--primary-foreground));
+  --color-secondary:            hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
+  --color-muted:                hsl(var(--muted));
+  --color-muted-foreground:     hsl(var(--muted-foreground));
+  --color-accent:               hsl(var(--accent));
+  --color-accent-foreground:    hsl(var(--accent-foreground));
+  --color-destructive:          hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-border:               hsl(var(--border));
+  --color-input:                hsl(var(--input));
+  --color-ring:                 hsl(var(--ring));
+  --radius-sm:  calc(var(--radius) - 4px);
+  --radius-md:  calc(var(--radius) - 2px);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) + 4px);
 }
 
 /* ── Base styles ──────────────────────────────────────────────────────────── */
@@ -64,25 +82,26 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 14px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   /* Tabular numbers for all metric displays */
   .tabular { font-variant-numeric: tabular-nums; }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  /* Thin, unobtrusive scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
-    border-radius: 3px;
+    border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.4);
+    background: hsl(var(--muted-foreground) / 0.35);
   }
 }
 
@@ -90,7 +109,7 @@
 
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50%       { opacity: 0; }
 }
 
 .streaming-cursor::after {
@@ -98,27 +117,21 @@
   display: inline;
   margin-left: 1px;
   animation: cursor-blink 0.9s step-end infinite;
-  color: hsl(var(--primary));
+  color: hsl(var(--muted-foreground));
 }
 
-/* ── Dot pulse animation (processing state) ───────────────────────────────── */
+/* ── Dot pulse (processing state) ─────────────────────────────────────────── */
 
 @keyframes dot-pulse {
   0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1); opacity: 1; }
+  40%           { transform: scale(1);   opacity: 1;   }
 }
 
-/* ── Fade-in for new messages ─────────────────────────────────────────────── */
+/* ── Message fade-in ──────────────────────────────────────────────────────── */
 
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
 .animate-fade-up {
