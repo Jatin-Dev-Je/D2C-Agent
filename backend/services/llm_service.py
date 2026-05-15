@@ -389,12 +389,34 @@ class LLMService:
         citation_trace = build_citation_trace(rows=revenue_context + ad_spend_context, metric_name="roas", operation="get_roas_summary").model_dump(mode="python")
         return {**summary, "cited_values": cited_values, "citation_trace": citation_trace}
 
+    async def _handle_trigger_watchdog(self, merchant_id: str, tool_input: dict[str, Any]) -> dict[str, Any]:
+        from backend.agents.ad_watchdog import AdWatchdogAgent
+        from backend.core.database import save_agent_log
+
+        agent = AdWatchdogAgent()
+        result = await agent.execute(merchant_id)
+        agent_log = agent.build_agent_log(merchant_id=merchant_id, result=result)
+        await save_agent_log(agent_log)
+
+        cited_values = result.cited_values[:3] if result.cited_values else []
+
+        return {
+            "wrote_to": "agent_run_logs",
+            "log_id": agent_log.id,
+            "status": agent_log.status,
+            "proposed_action": agent_log.proposed_action,
+            "observation": agent_log.observation,
+            "estimated_saving_inr": str(agent_log.estimated_saving_inr) if agent_log.estimated_saving_inr else None,
+            "cited_values": cited_values,
+        }
+
     _TOOL_DISPATCH: dict[str, str] = {
         "query_metrics": "_handle_query_metrics",
         "get_metric_summary": "_handle_get_metric_summary",
         "compare_metric_periods": "_handle_compare_metric_periods",
         "get_campaign_performance": "_handle_get_campaign_performance",
         "get_roas_summary": "_handle_get_roas_summary",
+        "trigger_watchdog": "_handle_trigger_watchdog",
     }
 
     async def _execute_tool(self, merchant_id: str, tool_name: str, tool_input: dict[str, Any]) -> dict[str, Any]:

@@ -223,12 +223,28 @@ GET_ROAS_SUMMARY_TOOL: dict[str, Any] = {
     },
 }
 
+TRIGGER_WATCHDOG_TOOL: dict[str, Any] = {
+    "name": "trigger_watchdog",
+    "description": (
+        "Run the AdWatchdog agent to analyse current ad performance and write a recommendation to the log. "
+        "Use when the user asks to check ad spend, detect anomalies, run the agent, or review ad performance. "
+        "This is a write operation — it creates a new agent run log entry in the database."
+    ),
+    "input_schema": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {},
+        "required": [],
+    },
+}
+
 TOOLS_LIST: list[dict[str, Any]] = [
     QUERY_METRICS_TOOL,
     GET_METRIC_SUMMARY_TOOL,
     COMPARE_METRIC_PERIODS_TOOL,
     GET_CAMPAIGN_PERFORMANCE_TOOL,
     GET_ROAS_SUMMARY_TOOL,
+    TRIGGER_WATCHDOG_TOOL,
 ]
 
 
