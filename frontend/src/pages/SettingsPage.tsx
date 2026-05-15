@@ -115,7 +115,10 @@ export function SettingsPage() {
       <PageHeader title="Settings" description="API connection and authentication" />
 
       <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-xl space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-4xl">
+
+          {/* ── Left column ──────────────────────────────────────────────── */}
+          <div className="space-y-5">
 
           {/* ── Auth status ──────────────────────────────────────────────── */}
           <Card className="border-border shadow-none">
@@ -282,8 +285,10 @@ export function SettingsPage() {
             </Card>
           </form>
 
-          {/* ── Token guide ───────────────────────────────────────────────── */}
-          <Card className="border-border shadow-none">
+          </div>{/* end left column */}
+
+          {/* ── Right column — Token guide ────────────────────────────────── */}
+          <Card className="border-border shadow-none self-start">
             <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center gap-2">
                 <Terminal className="h-4 w-4 text-muted-foreground" />
@@ -334,7 +339,7 @@ export function SettingsPage() {
             </CardContent>
           </Card>
 
-        </div>
+        </div>{/* end grid */}
       </div>
     </div>
   );
